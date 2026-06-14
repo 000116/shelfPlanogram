@@ -1,111 +1,238 @@
-# Planogram (Gondolbaşı)
+# Shell Planogram
 
+Shell istasyonları için gondolbaşı ve çikolata raf yerleşimlerini satış verileri,
+ürün ölçüleri ve iş kurallarıyla oluşturan web tabanlı planogram uygulaması.
+Backend FastAPI ve SQLite, arayüz React + TypeScript, optimizasyon katmanı ise
+Gurobi kullanır.
+
+## Özellikler
+
+- İstasyon ve çeyrek bazında gondolbaşı planogramı oluşturma
+- Ürün seçimi, otomatik öneri ve raf bazında yerleşim görüntüleme
+- 2 ve 3 modüllü çikolata planogramı optimizasyonu
+- Satış, kâr, ciro, Nielsen ve Deli2go ağırlıklarını düzenleme
+- Yönetici ve istasyon rolleriyle oturum tabanlı erişim
+- Gondol veya çikolata raflarına özel ürün ekleme ve silme
+- Gondolbaşı ve çikolata Excel dosyalarını tarayıcıda analiz etme
+- Planogram görünümünü PNG olarak dışa aktarma
+- React SPA'yı FastAPI üzerinden tek sunucuda yayınlama
+
+## Teknolojiler
+
+| Katman | Teknoloji |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite 8 |
+| Backend | Python, FastAPI, Uvicorn |
+| Optimizasyon | Gurobi / `gurobipy` |
+| Veri | SQLite, OpenPyXL, SheetJS |
+| Test | unittest, Vitest, Playwright |
+
+## Proje Yapısı
+
+```text
+shellPlanogram/
+├── backend/
+│   ├── main.py                    # FastAPI uygulaması ve API uçları
+│   ├── auth_users.py              # Kullanıcı doğrulama
+│   ├── database.py                # SQLite bağlantı yardımcıları
+│   ├── db_init.py                 # Excel verilerinden veritabanı üretimi
+│   ├── data/                      # Kaynak Excel dosyaları ve yerel SQLite DB
+│   ├── gurobi/
+│   │   ├── planogram_core.py      # Gondol planogramı
+│   │   └── planogram_chocolate.py # Çikolata planogramı
+│   └── spa_dist/                  # Üretilen React build'i (Git'e dahil değil)
+├── frontend-react/                # React + TypeScript arayüzü
+├── tests/                         # Backend ve uçtan uca testler
+├── playwright.config.ts
+├── requirements.txt
+└── package.json
 ```
-planogram/
-├── backend/          # FastAPI API + Gurobi optimizasyon
-│   ├── main.py               # FastAPI uygulaması (uvicorn ile çalışır)
-│   ├── auth_users.py         # Kullanıcı hesapları
-│   ├── gurobi/               # Planogram servisleri + Gurobi modelleri
-│   │   ├── planogram_core.py # Gondol veri hazırlığı ve JSON servisi
-│   │   └── planogram_chocolate.py # Çikolata veri/skor ve JSON servisi
-│   ├── spa_dist/             # React prod build (FastAPI buradan serve eder)
-│   └── data/
-│       ├── cikolata.xlsx
-│       ├── gondolbasi.xlsx
-│       └── planogram.db
-├── frontend-react/   # React + TypeScript + Vite ön yüz (TEK ARAYÜZ)
-│   ├── public/               # statik varlıklar (shell-logo.png, favicon.svg)
-│   └── src/
-└── requirements.txt
-```
 
-## Ön yüz (React)
+## Gereksinimler
 
-Ön yüz `frontend-react/` altında **React + TypeScript (Vite)** ile yazılmıştır.
-
-**Geliştirme (HMR):** FastAPI'yi ve Vite'ı ayrı çalıştır.
-```bash
-# 1. Backend (FastAPI API) — :8080
-cd backend && uvicorn main:app --port 8080 --reload
-# 2. Yeni terminalde React dev sunucusu — :5173 (/api otomatik :8080'e proxy)
-cd frontend-react && npm install && npm run dev
-```
-Tarayıcı: http://localhost:5173
-
-**Prod / tek sunucu:** React'i derle, FastAPI hem API'yi hem SPA'yı :8080'den sunar.
-```bash
-cd frontend-react && npm run build   # → backend/spa_dist
-cd ../backend && uvicorn main:app --port 8080
-```
-Tarayıcı: http://localhost:8080
-
-> Backend **FastAPI** (`backend/main.py`); veri hazırlığı servis modüllerinde,
-> matematiksel modeller `backend/gurobi/` altında tutulur.
+- Python 3.10 veya üzeri
+- Node.js 20.19 veya üzeri
+- npm
+- Gurobi Optimizer 12 ve geçerli bir Gurobi lisansı
 
 ## Kurulum
+
+Depoyu klonlayın ve proje dizinine girin:
+
+```bash
+git clone https://github.com/000116/shellPlanogram.git
+cd shellPlanogram
+git switch feature/initial-project
+```
+
+Python ortamını ve backend bağımlılıklarını kurun:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+Frontend ve Playwright bağımlılıklarını kurun:
+
+```bash
+npm install
+cd frontend-react
+npm install
+cd ..
+```
+
+Kaynak Excel dosyalarından yerel SQLite veritabanını oluşturun:
+
+```bash
 python backend/db_init.py
 ```
 
-`db_init.py`, Excel kaynaklarını geçici bir SQLite dosyasına aktarır; bütünlük
-ve foreign key kontrolleri başarılı olursa `backend/data/planogram.db` dosyasını
-atomik olarak yeniler. Aktarım başarısız olursa mevcut veritabanı korunur.
+Bu işlem `backend/data/gondolbasi.xlsx` ve `backend/data/cikolata.xlsx`
+dosyalarını okuyarak `backend/data/planogram.db` dosyasını üretir. Veritabanı
+ve derleme çıktıları `.gitignore` kapsamındadır.
 
-`backend/data/cikolata.xlsx` ve `backend/data/gondolbasi.xlsx` kaynak verileri,
-`backend/data/planogram.db` ise uygulamanın kullandığı SQLite veritabanını içerir.
+## Gurobi Lisansı
 
-## Gurobi (zorunlu)
-
-Orta ve alt raf **küme sıralaması** `gurobipy` ile MIP optimizasyonu kullanır. Üst raf iş kuralıyla sabittir.
-
-Okuldan lisans aldıktan sonra (macOS):
-
-1. [gurobi.com](https://www.gurobi.com) → Gurobi Optimizer indir ve kur (sürüm 12 önerilir, `requirements.txt` ile uyumlu).
-2. Terminalde lisansı aktive et (okulun verdiği yönteme göre), örn.:
-   ```bash
-   grbgetkey XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-   ```
-3. Proje sanal ortamında:
-   ```bash
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   python -c "import gurobipy as gp; m=gp.Model(); m.optimize(); print('Gurobi OK')"
-   ```
-
-`ModuleNotFoundError: gurobipy` → `pip install gurobipy`  
-`GurobiError` / lisans hatası → Optimizer kurulumu + `grbgetkey` eksik demektir.
-
-Kısıtlı pip lisansı küçük modellerde çalışabilir; bitirme sunumu için tam akademik lisans tercih edilir.
-
-## Çalıştırma
-
-**Web uygulaması (giriş + panel):**
+Gurobi optimizasyonunun çalışması için lisansın makinede etkin olması gerekir.
+Akademik lisans anahtarınız varsa örnek aktivasyon komutu:
 
 ```bash
-cd backend
-uvicorn main:app --port 8080
+grbgetkey XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 ```
 
-Tarayıcı: http://localhost:8080 → giriş ekranı (React SPA)
+Kurulumu doğrulayın:
 
-| Hesap | Kullanıcı adı | Şifre |
-|--------|----------------|--------|
+```bash
+source .venv/bin/activate
+python -c "import gurobipy as gp; m = gp.Model(); m.optimize(); print('Gurobi OK')"
+```
+
+`ModuleNotFoundError: gurobipy` hatasında Python bağımlılıklarını yeniden kurun.
+Lisans hatasında Gurobi kurulumunu ve lisans aktivasyonunu kontrol edin.
+
+## Geliştirme Ortamı
+
+Backend'i başlatın:
+
+```bash
+source .venv/bin/activate
+cd backend
+uvicorn main:app --port 8080 --reload
+```
+
+İkinci terminalde frontend'i başlatın:
+
+```bash
+cd frontend-react
+npm run dev
+```
+
+Uygulama: [http://localhost:5173](http://localhost:5173)
+
+Vite, geliştirme sırasında `/api` isteklerini otomatik olarak
+`http://localhost:8080` adresine yönlendirir.
+
+## Üretim Build'i
+
+React uygulamasını derleyin:
+
+```bash
+cd frontend-react
+npm run build
+```
+
+Build çıktısı `backend/spa_dist/` dizinine yazılır. Ardından FastAPI hem API'yi
+hem de React SPA'yı aynı porttan sunabilir:
+
+```bash
+cd ../backend
+uvicorn main:app --host 0.0.0.0 --port 8080
+```
+
+Uygulama: [http://localhost:8080](http://localhost:8080)
+
+Üretim ortamında oturum anahtarını mutlaka güçlü ve rastgele bir değerle verin:
+
+```bash
+SECRET_KEY="guclu-ve-rastgele-bir-deger" uvicorn main:app --host 0.0.0.0 --port 8080
+```
+
+## Demo Hesapları
+
+| Rol | Kullanıcı adı | Şifre |
+| --- | --- | --- |
 | Yönetici | `admin` | `admin123` |
-| İstasyon | istasyon adının slug’ı (örn. `acibademistanbul`) | `shell2025` |
+| İstasyon | İstasyon adının slug hali, ör. `acibademistanbul` | `shell2025` |
 
-- **Yönetici** → `/admin` — tüm istasyonlar, mevcut gondol planogramı
-- **İstasyon** → `/app` — sadece kendi istasyonu; kullanıcı adı = istasyon adı (küçük harf, Türkçe karakter yok)
+Bu bilgiler yalnızca demo/geliştirme kullanımı içindir. İnternete açık gerçek
+bir dağıtım öncesinde kimlik doğrulama ve parola yönetimi güçlendirilmelidir.
 
-Sol menü: Gondol başı (aktif planogram), Cips, Jelibon (yer tutucu — raf düzeni bitirme projesinden alınmadı).
+## Testler
 
-## API
+Backend testleri:
 
-| Endpoint | Açıklama |
-|----------|----------|
-| `GET /` | Dashboard (frontend) |
-| `GET /api/planogram?roc=6240&quarter=Q1` | Planogram JSON |
-| `GET /api/stations` | İstasyon listesi |
+```bash
+npm run test:backend
+```
+
+Frontend birim testleri ve lint:
+
+```bash
+cd frontend-react
+npm test
+npm run lint
+```
+
+Playwright uçtan uca testleri:
+
+```bash
+npm run test:e2e
+```
+
+Playwright yapılandırması backend ve frontend geliştirme sunucularını test
+süresince otomatik olarak başlatır.
+
+## API Özeti
+
+Kimlik doğrulama gerektiren uçlar oturum çerezi kullanır.
+
+| Metot | Endpoint | Açıklama |
+| --- | --- | --- |
+| `GET` | `/api/me` | Aktif kullanıcı ve panel bağlamı |
+| `GET` | `/api/demo-accounts` | Demo hesap listesi |
+| `POST` | `/api/login` | Oturum açma |
+| `POST` | `/api/logout` | Oturumu kapatma |
+| `GET` | `/api/stations` | Kullanıcının erişebildiği istasyonlar |
+| `GET` | `/api/planogram` | Gondol planogramını oluşturma |
+| `POST` | `/api/planogram` | Seçili ürünlerle gondol planogramı oluşturma |
+| `GET` | `/api/chocolate` | 2 veya 3 modüllü çikolata planogramı |
+| `GET` | `/api/chocolate/skus` | Çikolata SKU ve skor listesi |
+| `POST` | `/api/chocolate/allocate` | Ağırlıklarla çikolata yerleşimi oluşturma |
+| `GET` | `/api/custom-products` | Özel ürünleri listeleme |
+| `POST` | `/api/custom-products` | Özel ürün ekleme |
+| `DELETE` | `/api/custom-products/{id}` | Özel ürün silme |
+
+Örnek planogram isteği:
+
+```text
+GET /api/planogram?roc=6240&quarter=Q1
+```
+
+Geçerli çeyrek değerleri `Q1`, `Q2`, `Q3` ve `Q4`; çikolata modülü değerleri
+ise `2` ve `3` şeklindedir.
+
+## Veri Akışı
+
+1. `db_init.py`, Excel kaynaklarını geçici bir SQLite veritabanına aktarır.
+2. Bütünlük ve foreign key kontrolleri başarılıysa geçici dosya atomik olarak
+   `planogram.db` dosyasının yerine alınır.
+3. FastAPI, istasyon ve ürün verilerini SQLite üzerinden yükler.
+4. Gurobi modelleri seçilen istasyon, çeyrek, SKU ve ağırlıklara göre yerleşimi
+   hesaplar.
+5. React arayüzü sonuçları raf planogramı olarak gösterir.
+
+## Lisans
+
+Bu depoda henüz bir lisans dosyası bulunmamaktadır. Kullanım ve dağıtım
+koşulları proje sahibi tarafından belirlenmelidir.
