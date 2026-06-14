@@ -60,8 +60,8 @@ shellPlanogram/
 Depoyu klonlayın ve proje dizinine girin:
 
 ```bash
-git clone https://github.com/000116/shellPlanogram.git
-cd shellPlanogram
+git clone https://github.com/000116/shelfPlanogram.git
+cd shelfPlanogram
 git switch feature/initial-project
 ```
 
