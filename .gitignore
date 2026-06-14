@@ -1,0 +1,63 @@
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.egg-info/
+build/
+dist/
+
+# Node.js / React / Vite
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+frontend-react/dist/
+backend/spa_dist/
+*.tsbuildinfo
+vite.config.*.timestamp-*
+
+# Test output
+playwright-report/
+blob-report/
+test-results/
+coverage/
+
+# Local databases and runtime files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.log
+*.pid
+
+# Generated planogram images
+gondolbasi_planogram.png
+planogram_output.png
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local AI assistant settings
+.claude/
