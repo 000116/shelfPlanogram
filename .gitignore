@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.pyc
+**/__pycache__/
+**/*.pyc
+.DS_Store
+**/.DS_Store
+.claude/
+.DS_Store
+gondolbasi_planogram.png
+planogram_output.png
+
+# React / Vite
+node_modules/
+frontend-react/node_modules/
+frontend-react/dist/
+backend/spa_dist/
+
+# Playwright E2E (npm run test:e2e çıktıları — repoya girmez)
+playwright-report/
+blob-report/
+test-results/
+tests/test-results/

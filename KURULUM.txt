@@ -1,0 +1,35 @@
+Planogram — Hızlı kurulum
+========================
+
+1) Python 3.9+, Node 18+ ve Gurobi (gurobipy + lisans) gerekli.
+
+2) Backend (FastAPI) bağımlılıkları:
+   cd planogram
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+
+3) Veritabanını Excel kaynaklarından oluştur / yenile:
+   python backend/db_init.py
+
+   Bu işlem önce geçici bir veritabanı oluşturur. Kontroller başarılı olursa
+   backend/data/planogram.db güvenli biçimde yenilenir.
+
+4) Ön yüzü (React) derle:
+   cd frontend-react
+   npm install
+   npm run build        # → backend/spa_dist
+
+5) Çalıştır (FastAPI, hem API hem React'i sunar):
+   cd ../backend
+   uvicorn main:app --port 8080 --reload
+
+6) Tarayıcı: http://localhost:8080
+
+   (Geliştirme/HMR için ayrıca: cd frontend-react && npm run dev → http://localhost:5173)
+
+   Yönetici: admin / admin123
+   İstasyon: istasyon adı slug (örn. acibademistanbul) / shell2025
+   (Giriş ekranında demo hesaplar listelenir.)
+
+Detay: README.md

@@ -1,0 +1,17 @@
+{
+  "name": "planogram8",
+  "private": true,
+  "scripts": {
+    "postinstall": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
+    "test:backend": ".venv/bin/python -m unittest discover -s tests -p 'test_*.py'",
+    "test:fail-demo": ".venv/bin/python -m unittest discover -s tests/fail_demo -p 'demo_*.py'",
+    "test:e2e": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
+    "test:e2e:ui": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test --ui",
+    "test:e2e:headed": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^24.12.3",
+    "typescript": "~6.0.2"
+  }
+}
