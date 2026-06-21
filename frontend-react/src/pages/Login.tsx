@@ -7,8 +7,8 @@ export default function Login({ onLoggedIn }: { onLoggedIn: (ctx: MeContext) => 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [accounts, setAccounts] = useState<DemoAccount[]>([])
   const [busy, setBusy] = useState(false)
+  const [accounts, setAccounts] = useState<DemoAccount[]>([])
 
   useEffect(() => { getDemoAccounts().then(setAccounts) }, [])
 
@@ -66,11 +66,20 @@ export default function Login({ onLoggedIn }: { onLoggedIn: (ctx: MeContext) => 
         </form>
 
         {accounts.length > 0 && (
-          <div className="demo">
-            <strong>Demo hesaplar (yerel)</strong>
-            {accounts.map((a, i) => (
-              <div key={i}>{a.role}: <code>{a.user}</code> / {a.pass}</div>
-            ))}
+          <div className="login-accounts">
+            <div className="login-accounts-title">Hesaplar</div>
+            <div className="login-accounts-list">
+              {accounts.map((a, i) => (
+                <div key={i} className="login-account-row">
+                  <span className="login-account-role">{a.role}</span>
+                  <span className="login-account-cred">
+                    <code>{a.user}</code>
+                    <span className="login-account-sep">/</span>
+                    <code>{a.pass}</code>
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

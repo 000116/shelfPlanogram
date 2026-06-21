@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import os
 import math
+import secrets
 from typing import Optional, List, Dict
 
 from fastapi import FastAPI, Request, Depends, HTTPException
@@ -33,7 +34,7 @@ SPA_DIST = os.path.join(BACKEND_DIR, "spa_dist")
 app = FastAPI(title="Planogram API")
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.environ.get("SECRET_KEY", "dev-planogram-local-only"),
+    secret_key=os.environ.get("SECRET_KEY", secrets.token_hex(32)),
     same_site="lax",
     https_only=False,
 )
