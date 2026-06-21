@@ -1,3 +1,7 @@
+# Data files
+*.db
+*.xlsx
+
 .venv/
 __pycache__/
 *.pyc
