@@ -1,6 +1,6 @@
 import type {
   MeContext, DemoAccount, PlanogramData, ChocoData, ChocoSku, Weights,
-  CustomProductPayload, CustomProductRecord,
+  CustomProductPayload, CustomProductRecord, StationSummary,
 } from './types'
 
 const opts: RequestInit = { credentials: 'same-origin' }
@@ -40,6 +40,10 @@ export async function login(username: string, password: string): Promise<MeConte
 
 export async function logout(): Promise<void> {
   await fetch('/api/logout', { ...opts, method: 'POST' })
+}
+
+export function getStationsSummary(): Promise<StationSummary[]> {
+  return jget<StationSummary[]>('/api/stations-summary')
 }
 
 export function getPlanogram(roc: number, quarter: string, selected?: string[]): Promise<PlanogramData> {

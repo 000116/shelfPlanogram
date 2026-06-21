@@ -136,6 +136,40 @@ def api_logout(request: Request):
     return {"ok": True}
 
 
+@app.get("/api/stations-summary")
+def api_stations_summary(user: dict = Depends(require_login)):
+    core.load_data_from_db()
+    active_zones = [
+        {"id": "GONDOL", "label": "Gondol Başı"},
+        {"id": "CHOCO3", "label": "Çikolata 3M"},
+        {"id": "CHOCO2", "label": "Çikolata 2M"},
+    ]
+    result = []
+    with db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT roc, SUM(qty) FROM sales GROUP BY roc"
+        )
+        sales_map = {roc: int(total) for roc, total in cursor.fetchall()}
+
+    allowed_rocs = (
+        list(core.STATIONS.keys())
+        if is_admin(user)
+        else ([user["roc"]] if user.get("roc") in core.STATIONS else [])
+    )
+
+    for roc in sorted(allowed_rocs):
+        name = core.STATIONS.get(roc, f"ROC {roc}")
+        result.append({
+            "roc": roc,
+            "name": name,
+            "annual_sales": sales_map.get(roc, 0),
+            "active_zones": active_zones,
+            "status": "taslak",
+        })
+    return result
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Planogram / Çikolata uçları
 # ══════════════════════════════════════════════════════════════════════════════

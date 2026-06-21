@@ -2,10 +2,12 @@ import { useEffect, useState, useCallback } from 'react'
 import type { MeContext } from './types'
 import { getMe } from './api'
 import Login from './pages/Login'
+import Home from './pages/Home'
 import Panel from './pages/Panel'
 
 export default function App() {
   const [me, setMe] = useState<MeContext | null>(null)
+  const [selectedRoc, setSelectedRoc] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
@@ -18,7 +20,10 @@ export default function App() {
     }
   }, [])
 
-  const logout = useCallback(() => setMe(null), [])
+  const logout = useCallback(() => {
+    setMe(null)
+    setSelectedRoc(null)
+  }, [])
 
   useEffect(() => { refresh() }, [refresh])
 
@@ -37,5 +42,22 @@ export default function App() {
     return <Login onLoggedIn={setMe} />
   }
 
-  return <Panel ctx={me} onLogout={logout} />
+  if (selectedRoc === null) {
+    return (
+      <Home
+        ctx={me}
+        onSelectStation={setSelectedRoc}
+        onLogout={logout}
+      />
+    )
+  }
+
+  return (
+    <Panel
+      ctx={me}
+      initialRoc={selectedRoc}
+      onLogout={logout}
+      onHome={() => setSelectedRoc(null)}
+    />
+  )
 }

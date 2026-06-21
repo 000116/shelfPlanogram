@@ -1043,3 +1043,160 @@ body {
 }
 .login-page .demo strong { color: #1a1a1a; display: block; margin-bottom: 6px; font-size: 12px; }
 .login-page .demo code { font-family: ui-monospace, Menlo, monospace; font-size: 10px; }
+
+/* ─── ANASAYFA / İSTASYON SEÇİMİ ────────────────────────────────────────── */
+.home-wrap {
+  flex: 1;
+  padding: 32px 32px 48px;
+  width: 100%;
+  overflow-y: auto;
+}
+.home-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.home-title-block {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.home-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.home-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+.home-search {
+  width: 240px;
+  padding: 8px 14px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+  font-family: var(--font);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.home-search:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(221,29,33,0.08);
+}
+.home-loading {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+.home-empty {
+  text-align: center;
+  color: var(--sub);
+  font-size: 14px;
+  padding: 80px 0;
+}
+
+/* ─── İSTASYON KART GRİDİ ───────────────────────────────────────────────── */
+.station-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.sc-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font);
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+}
+.sc-card:hover {
+  border-color: var(--red);
+  box-shadow: 0 8px 24px rgba(221,29,33,0.10);
+  transform: translateY(-3px);
+}
+.sc-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+.sc-section {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+}
+.sc-section-right {
+  border-left: 1px solid var(--border-s);
+}
+.sc-divider {
+  height: 1px;
+  background: var(--border-s);
+}
+.sc-station-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.sc-roc {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+}
+.sc-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sc-zone {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 7px;
+  color: var(--zc, #607d8b);
+  background: color-mix(in srgb, var(--zc, #607d8b) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--zc, #607d8b) 22%, transparent);
+  white-space: nowrap;
+}
+.sc-bottom {
+  display: flex;
+  background: #fafafa;
+}
+.sc-bottom .sc-section {
+  flex: 1;
+}
+.sc-sales {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.sc-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  align-self: flex-start;
+}
+.sc-status-taslak {
+  color: #92700a;
+  background: #fef9e7;
+  border: 1px solid #f0d060;
+}

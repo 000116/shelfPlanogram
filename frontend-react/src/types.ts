@@ -1,5 +1,14 @@
 export interface Station { roc: number; name: string; }
 
+export interface StationZone { id: string; label: string; }
+export interface StationSummary {
+  roc: number;
+  name: string;
+  annual_sales: number;
+  active_zones: StationZone[];
+  status: string;
+}
+
 export interface FixtureShelf { id: string; label: string; }
 export interface FixtureArea {
   id: string;

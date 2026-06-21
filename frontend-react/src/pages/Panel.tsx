@@ -18,10 +18,12 @@ import AddProductModal from '../panel/AddProductModal'
 const CHOCO_MODULE: Record<string, string> = { CHOCO3: '3', CHOCO2: '2' }
 const isChoco = (z: string) => z === 'CHOCO3' || z === 'CHOCO2'
 
-export default function Panel({ ctx, onLogout }: { ctx: MeContext; onLogout: () => void }) {
+export default function Panel({ ctx, initialRoc, onLogout, onHome }: {
+  ctx: MeContext; initialRoc?: number; onLogout: () => void; onHome?: () => void
+}) {
   const [zone, setZone] = useState('GONDOL')
   const [shelf, setShelf] = useState('ALL')
-  const [roc, setRoc] = useState(ctx.default_roc)
+  const [roc, setRoc] = useState(initialRoc ?? ctx.default_roc)
   const [quarter, setQuarter] = useState('Q1')
 
   const [planogram, setPlanogram] = useState<PlanogramData | null>(null)
@@ -425,6 +427,9 @@ export default function Panel({ ctx, onLogout }: { ctx: MeContext; onLogout: () 
             </div>
 
             <div className="topbar-actions">
+              {onHome && (
+                <button type="button" className="btn-png" onClick={onHome}>← İstasyonlar</button>
+              )}
               <button type="button" className="btn-png" onClick={exportPng} disabled={pngDisabled}>PNG aktar</button>
               <button type="button" className="btn-png" onClick={() => setAddProductOpen(true)}>
                 Ürün Ekle
